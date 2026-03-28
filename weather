@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { margin: 0; padding: 10px; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="idad5ba8b72e675" a='{"t":"g7bs","v":"1.2","lang":"ko","locs":[873],"ssot":"c","sics":"ds","cbkg":"#FFFFFF","cfnt":"#000000","cend":"#FFFFFF00"}'>
+    날씨 데이터 소스: 
+    <a href="https://sharpweather.com/weather_seoul/30_days/">30 days Seoul weather</a>
+  </div>
+  <script async src="https://static1.sharpweather.com/widgetjs/?id=idad5ba8b72e675"></script>
+</body>
+</html>
