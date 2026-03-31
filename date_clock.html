@@ -6,7 +6,6 @@
 <title>Flip Clock</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -14,38 +13,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1b1b2f;
-    background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(72, 52, 120, 0.4) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 50%, rgba(30, 60, 90, 0.3) 0%, transparent 60%);
+    background: #ffffff;
     font-family: 'Bebas Neue', 'Arial Black', sans-serif;
-    overflow: hidden;
   }
 
   .clock-wrapper {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 40px 50px;
-    border-radius: 24px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    backdrop-filter: blur(20px);
+    gap: 6px;
+    padding: 16px;
+    background: transparent;
     flex-wrap: wrap;
     justify-content: center;
   }
 
+  /* Cards: 40x54 (80% of 50x67) */
   .flip-card {
     position: relative;
-    width: 72px;
-    height: 96px;
-    border-radius: 12px;
+    width: 40px;
+    height: 54px;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow:
-      0 8px 32px rgba(0,0,0,0.5),
-      inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
-
   .flip-card .top-half,
   .flip-card .bottom-half {
     position: absolute;
@@ -54,74 +44,61 @@
     overflow: hidden;
     left: 0;
   }
-
   .flip-card .top-half {
     top: 0;
-    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
-    border-radius: 12px 12px 0 0;
-    border-bottom: 1.5px solid #111;
+    background: linear-gradient(180deg, #3a3a3a, #2a2a2a);
+    border-radius: 6px 6px 0 0;
+    border-bottom: 1px solid #111;
   }
-
   .flip-card .bottom-half {
     bottom: 0;
-    background: linear-gradient(180deg, #222 0%, #1a1a1a 100%);
-    border-radius: 0 0 12px 12px;
+    background: linear-gradient(180deg, #222, #1a1a1a);
+    border-radius: 0 0 6px 6px;
   }
-
   .flip-card .top-half .digit,
   .flip-card .bottom-half .digit {
     position: absolute;
     width: 100%;
     text-align: center;
-    font-size: 72px;
+    font-size: 40px;
     font-weight: 400;
-    line-height: 96px;
-    letter-spacing: 2px;
+    line-height: 54px;
     color: #e8e8e8;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
-
   .flip-card .top-half .digit { top: 0; }
   .flip-card .bottom-half .digit { bottom: 0; }
-
   .flip-card .hinge-l,
   .flip-card .hinge-r {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
+    width: 5px;
+    height: 5px;
     background: #0e0e0e;
     border-radius: 50%;
     z-index: 20;
-    box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);
   }
   .flip-card .hinge-l { left: 0; }
   .flip-card .hinge-r { right: 0; }
-
   .flip-card .shine {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     width: 100%;
     height: 48%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), transparent);
     pointer-events: none;
     z-index: 15;
-    border-radius: 12px 12px 0 0;
+    border-radius: 6px 6px 0 0;
   }
-
-  /* Flip animation overlay */
   .flip-card .flipper {
     position: absolute;
     width: 100%;
     height: 50%;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     transform-origin: bottom center;
     z-index: 10;
     overflow: hidden;
-    border-radius: 12px 12px 0 0;
+    border-radius: 6px 6px 0 0;
     backface-visibility: hidden;
     pointer-events: none;
     display: none;
@@ -134,156 +111,92 @@
     position: absolute;
     width: 100%;
     text-align: center;
-    font-size: 72px;
+    font-size: 40px;
     font-weight: 400;
-    line-height: 96px;
-    letter-spacing: 2px;
+    line-height: 54px;
     color: #e8e8e8;
     top: 0;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
-
   @keyframes flipDown {
-    0% {
-      transform: rotateX(0deg);
-      background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
-    }
-    50% {
-      background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-    }
-    100% {
-      transform: rotateX(-90deg);
-      background: linear-gradient(180deg, #222 0%, #1a1a1a 100%);
-    }
-  }
-
-  /* Small cards for date */
-  .flip-card.sm {
-    width: 56px;
-    height: 74px;
-    border-radius: 10px;
-  }
-  .flip-card.sm .top-half { border-radius: 10px 10px 0 0; }
-  .flip-card.sm .bottom-half { border-radius: 0 0 10px 10px; }
-  .flip-card.sm .shine { border-radius: 10px 10px 0 0; }
-  .flip-card.sm .top-half .digit,
-  .flip-card.sm .bottom-half .digit {
-    font-size: 54px;
-    line-height: 74px;
-  }
-  .flip-card.sm .flipper .digit {
-    font-size: 54px;
-    line-height: 74px;
-  }
-  .flip-card.sm .flipper { border-radius: 10px 10px 0 0; }
-  .flip-card.sm .hinge-l,
-  .flip-card.sm .hinge-r {
-    width: 6px;
-    height: 6px;
+    0% { transform: rotateX(0deg); background: linear-gradient(180deg, #3a3a3a, #2a2a2a); }
+    100% { transform: rotateX(-90deg); background: linear-gradient(180deg, #222, #1a1a1a); }
   }
 
   .separator {
-    font-size: 56px;
-    color: rgba(232,232,232,0.9);
-    line-height: 96px;
-    padding: 0 2px;
-    text-shadow: 0 0 20px rgba(255,255,255,0.15);
+    font-size: 30px;
+    color: #1a1a1a;
+    line-height: 54px;
+    padding: 0 1px;
     animation: blink 1s ease-in-out infinite;
   }
-
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
 
   .dot-sep {
-    font-size: 36px;
-    color: rgba(232,232,232,0.6);
-    padding: 0 2px;
+    font-size: 19px;
+    color: #1a1a1a;
+    padding: 0 1px;
     align-self: center;
   }
 
-  .label-card {
+  .label-day {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 36px;
-    padding: 0 12px;
+    width: 40px;
+    height: 34px;
     background: linear-gradient(180deg, #3a3a3a, #1a1a1a);
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 6px;
+    font-size: 13px;
     letter-spacing: 2px;
-    color: #aaa;
+    color: #ccc;
     align-self: flex-end;
-    margin-bottom: 2px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
 
-  .section-gap {
-    width: 20px;
+  .label-ampm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 29px;
+    height: 34px;
+    background: linear-gradient(180deg, #3a3a3a, #1a1a1a);
+    border-radius: 6px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #ccc;
+    align-self: flex-end;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   }
+
+  .section-gap { width: 11px; }
 
   .date-group, .time-group {
     display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  /* Ambient glow */
-  .glow-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: -1;
-  }
-  .glow-orb.a {
-    width: 300px; height: 300px;
-    background: rgba(100, 60, 180, 0.15);
-    top: 20%; left: 10%;
-    animation: float1 8s ease-in-out infinite;
-  }
-  .glow-orb.b {
-    width: 250px; height: 250px;
-    background: rgba(40, 100, 160, 0.12);
-    bottom: 15%; right: 10%;
-    animation: float2 10s ease-in-out infinite;
-  }
-
-  @keyframes float1 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(30px, -20px); }
-  }
-  @keyframes float2 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-20px, 15px); }
+    align-items: flex-end;
+    gap: 3px;
   }
 </style>
 </head>
 <body>
 
-<div class="glow-orb a"></div>
-<div class="glow-orb b"></div>
-
 <div class="clock-wrapper">
-  <!-- Date: YYYY.MM.DD DAY -->
   <div class="date-group">
-    <div class="flip-card sm" id="y1"></div>
-    <div class="flip-card sm" id="y2"></div>
-    <div class="flip-card sm" id="y3"></div>
-    <div class="flip-card sm" id="y4"></div>
+    <div class="flip-card" id="y1"></div>
+    <div class="flip-card" id="y2"></div>
+    <div class="flip-card" id="y3"></div>
+    <div class="flip-card" id="y4"></div>
     <span class="dot-sep">.</span>
-    <div class="flip-card sm" id="m1"></div>
-    <div class="flip-card sm" id="m2"></div>
+    <div class="flip-card" id="m1"></div>
+    <div class="flip-card" id="m2"></div>
     <span class="dot-sep">.</span>
-    <div class="flip-card sm" id="d1"></div>
-    <div class="flip-card sm" id="d2"></div>
-    <div class="label-card" id="dayLabel">TUE</div>
+    <div class="flip-card" id="d1"></div>
+    <div class="flip-card" id="d2"></div>
+    <div class="label-day" id="dayLabel">TUE</div>
   </div>
-
   <div class="section-gap"></div>
-
-  <!-- Time: HH:MM:SS PM -->
   <div class="time-group">
     <div class="flip-card" id="h1"></div>
     <div class="flip-card" id="h2"></div>
@@ -293,7 +206,7 @@
     <span class="separator">:</span>
     <div class="flip-card" id="s1"></div>
     <div class="flip-card" id="s2"></div>
-    <div class="label-card" id="ampm">PM</div>
+    <div class="label-ampm" id="ampm">PM</div>
   </div>
 </div>
 
@@ -305,14 +218,12 @@ const prevVals = {};
 function initCards() {
   cardIds.forEach(id => {
     const el = document.getElementById(id);
-    el.innerHTML = `
-      <div class="top-half"><div class="digit"></div></div>
-      <div class="bottom-half"><div class="digit"></div></div>
-      <div class="hinge-l"></div>
-      <div class="hinge-r"></div>
-      <div class="shine"></div>
-      <div class="flipper"><div class="digit"></div></div>
-    `;
+    el.innerHTML =
+      '<div class="top-half"><div class="digit"></div></div>' +
+      '<div class="bottom-half"><div class="digit"></div></div>' +
+      '<div class="hinge-l"></div><div class="hinge-r"></div>' +
+      '<div class="shine"></div>' +
+      '<div class="flipper"><div class="digit"></div></div>';
   });
 }
 
@@ -320,7 +231,6 @@ function setCard(id, val) {
   const el = document.getElementById(id);
   if (!el) return;
   const changed = prevVals[id] !== undefined && prevVals[id] !== val;
-
   if (changed) {
     const flipper = el.querySelector('.flipper');
     flipper.classList.remove('active');
@@ -329,7 +239,6 @@ function setCard(id, val) {
     flipper.classList.add('active');
     setTimeout(() => flipper.classList.remove('active'), 500);
   }
-
   prevVals[id] = val;
   el.querySelector('.top-half .digit').textContent = val;
   el.querySelector('.bottom-half .digit').textContent = val;
@@ -347,20 +256,13 @@ function tick() {
   const mi = String(now.getMinutes()).padStart(2, '0');
   const sc = String(now.getSeconds()).padStart(2, '0');
 
-  setCard('y1', yr[0]);
-  setCard('y2', yr[1]);
-  setCard('y3', yr[2]);
-  setCard('y4', yr[3]);
-  setCard('m1', mo[0]);
-  setCard('m2', mo[1]);
-  setCard('d1', dy[0]);
-  setCard('d2', dy[1]);
-  setCard('h1', hrS[0]);
-  setCard('h2', hrS[1]);
-  setCard('mi1', mi[0]);
-  setCard('mi2', mi[1]);
-  setCard('s1', sc[0]);
-  setCard('s2', sc[1]);
+  setCard('y1', yr[0]); setCard('y2', yr[1]);
+  setCard('y3', yr[2]); setCard('y4', yr[3]);
+  setCard('m1', mo[0]); setCard('m2', mo[1]);
+  setCard('d1', dy[0]); setCard('d2', dy[1]);
+  setCard('h1', hrS[0]); setCard('h2', hrS[1]);
+  setCard('mi1', mi[0]); setCard('mi2', mi[1]);
+  setCard('s1', sc[0]); setCard('s2', sc[1]);
 
   document.getElementById('dayLabel').textContent = DAYS[now.getDay()];
   document.getElementById('ampm').textContent = ampm;
