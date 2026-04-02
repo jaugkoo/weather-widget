@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Luna</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#fefcf9;font-family:'Cormorant Garamond',serif;overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none}
+
+.luna-wrap{position:relative;width:100px;height:100px;cursor:pointer}
+.luna-mini{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:all .6s cubic-bezier(.4,0,.2,1)}
+.luna-bg{position:absolute;inset:0;border-radius:50%;transition:background .8s}
+.luna-flower{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2}
+.petal{position:absolute;width:18px;height:24px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;transform-origin:bottom center;opacity:0;transition:all .8s cubic-bezier(.4,0,.2,1)}
+.petal.show{opacity:1}
+.stem{position:absolute;width:2px;height:20px;background:#7a9e7e;bottom:-18px;left:50%;transform:translateX(-50%);border-radius:1px;z-index:1}
+.leaf{position:absolute;width:10px;height:6px;background:#8fb896;border-radius:50%;z-index:1;transition:all .8s}
+.leaf-l{bottom:-12px;left:-6px;transform:rotate(-30deg)}
+.leaf-r{bottom:-8px;right:-6px;transform:rotate(30deg)}
+.center-dot{position:absolute;width:6px;height:6px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;transition:background .8s}
+.luna-num{position:relative;z-index:4;font-size:11px;font-weight:300;letter-spacing:1px;margin-top:28px;transition:color .8s;opacity:.7}
+
+.falling-petal{position:absolute;width:6px;height:8px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;z-index:1;opacity:0;pointer-events:none}
+@keyframes fall1{0%{transform:translate(0,0) rotate(0);opacity:.8}100%{transform:translate(-15px,30px) rotate(120deg);opacity:0}}
+@keyframes fall2{0%{transform:translate(0,0) rotate(0);opacity:.7}100%{transform:translate(10px,35px) rotate(-90deg);opacity:0}}
+@keyframes fall3{0%{transform:translate(0,0) rotate(0);opacity:.6}100%{transform:translate(-8px,28px) rotate(80deg);opacity:0}}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5}50%{transform:translate(-50%,-50%) scale(1.3);opacity:.9}}
+@keyframes sway{0%,100%{transform:rotate(var(--base-rot))}50%{transform:rotate(calc(var(--base-rot) + 3deg))}}
+
+.detail-overlay{position:fixed;inset:0;background:rgba(254,252,249,.95);z-index:100;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .4s}
+.detail-overlay.show{display:flex;opacity:1}
+.detail-card{width:260px;padding:28px 24px;text-align:center}
+.detail-flower-big{width:60px;height:60px;margin:0 auto 8px;position:relative}
+.detail-stage{font-size:14px;font-weight:400;color:#a08090;margin-bottom:20px;letter-spacing:2px}
+.detail-info{text-align:left;margin-bottom:20px}
+.detail-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.04);font-size:13px;color:#666}
+.detail-row span:first-child{color:#aaa;font-weight:300}
+.detail-row span:last-child{font-weight:400;color:#555}
+.detail-btn{display:inline-block;padding:8px 20px;border:1px solid #dcc;border-radius:20px;font-family:inherit;font-size:12px;color:#a08080;background:transparent;cursor:pointer;margin:4px;transition:all .3s}
+.detail-btn:hover{background:#f5e8e8;border-color:#c9a;color:#906}
+.detail-btn.setting-btn{border-color:#ccc;color:#999}
+.detail-btn.setting-btn:hover{background:#f0f0f0;color:#666}
+
+.settings-overlay{position:fixed;inset:0;background:rgba(254,252,249,.97);z-index:200;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .4s}
+.settings-overlay.show{display:flex;opacity:1}
+.settings-card{width:280px;padding:28px 24px}
+.settings-title{font-size:15px;font-weight:400;color:#888;text-align:center;margin-bottom:20px;letter-spacing:2px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;color:#aaa;margin-bottom:4px;letter-spacing:1px}
+.field input{width:100%;padding:8px 10px;border:1px solid #e0d8d8;border-radius:8px;font-family:inherit;font-size:13px;color:#555;background:#fefcf9;outline:none}
+.field input:focus{border-color:#d4a}
+.settings-btns{display:flex;gap:8px;margin-top:20px;justify-content:center}
+.settings-btns button{padding:8px 16px;border-radius:20px;font-family:inherit;font-size:12px;cursor:pointer;border:1px solid #dcc;background:transparent;color:#a08080;transition:all .3s}
+.settings-btns button:hover{background:#f5e8e8}
+.settings-btns .save-btn{background:#f0e0e4;border-color:#d4a;color:#906}
+.settings-btns .save-btn:hover{background:#e8c8d0}
+.settings-btns .del-btn{border-color:#e8a;color:#c66}
+.settings-btns .del-btn:hover{background:#fde8e8}
+</style>
+</head>
+<body>
+
+<div class="luna-wrap" id="lunaWrap">
+  <div class="luna-mini" id="lunaMini">
+    <div class="luna-bg" id="lunaBg"></div>
+    <div class="luna-flower" id="lunaFlower">
+      <div class="petal" id="p0"></div>
+      <div class="petal" id="p1"></div>
+      <div class="petal" id="p2"></div>
+      <div class="petal" id="p3"></div>
+      <div class="petal" id="p4"></div>
+      <div class="center-dot" id="centerDot"></div>
+      <div class="stem"></div>
+      <div class="leaf leaf-l" id="leafL"></div>
+      <div class="leaf leaf-r" id="leafR"></div>
+    </div>
+    <div class="falling-petal" id="fp0"></div>
+    <div class="falling-petal" id="fp1"></div>
+    <div class="falling-petal" id="fp2"></div>
+    <div class="luna-num" id="lunaNum"></div>
+  </div>
+</div>
+
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-card">
+    <div class="detail-flower-big" id="detailFlower"></div>
+    <div class="detail-stage" id="detailStage"></div>
+    <div class="detail-info">
+      <div class="detail-row"><span>next</span><span id="dNext">-</span></div>
+      <div class="detail-row"><span>fertile</span><span id="dFertile">-</span></div>
+      <div class="detail-row"><span>pms</span><span id="dPms">-</span></div>
+      <div class="detail-row"><span>last</span><span id="dLast">-</span></div>
+      <div class="detail-row"><span>cycle</span><span id="dCycle">-</span></div>
+    </div>
+    <div>
+      <button class="detail-btn" id="btnToday">today start</button>
+      <button class="detail-btn setting-btn" id="btnSettings">settings</button>
+    </div>
+  </div>
+</div>
+
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-card">
+    <div class="settings-title">settings</div>
+    <div class="field"><label>1st recent start</label><input type="date" id="sDate1"></div>
+    <div class="field"><label>2nd recent start</label><input type="date" id="sDate2"></div>
+    <div class="field"><label>3rd recent start</label><input type="date" id="sDate3"></div>
+    <div class="field"><label>period days</label><input type="number" id="sPeriod" min="2" max="10" value="5"></div>
+    <div class="settings-btns">
+      <button class="del-btn" id="btnDelete">reset</button>
+      <button id="btnCancel">cancel</button>
+      <button class="save-btn" id="btnSave">save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KST=()=>new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Seoul"}));
+const fmt=d=>{const m=d.getMonth()+1,dd=d.getDate();return m+"/"+dd};
+const fmtISO=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),dd=String(d.getDate()).padStart(2,"0");return y+"-"+m+"-"+dd};
+const diffDays=(a,b)=>Math.round((a-b)/(86400000));
+const addDays=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r};
+
+const LS_KEY="luna_data";
+let data=null;
+
+function load(){try{data=JSON.parse(localStorage.getItem(LS_KEY))}catch(e){data=null}}
+function save(){localStorage.setItem(LS_KEY,JSON.stringify(data))}
+
+function calcCycle(){
+  if(!data||!data.records||data.records.length<2)return null;
+  const sorted=data.records.map(s=>new Date(s)).sort((a,b)=>a-b);
+  let sum=0;
+  for(let i=1;i<sorted.length;i++)sum+=diffDays(sorted[i],sorted[i-1]);
+  return Math.round(sum/(sorted.length-1));
+}
+
+function getState(){
+  if(!data||!data.records||data.records.length===0)return{stage:"none",dday:0};
+  const sorted=data.records.map(s=>new Date(s)).sort((a,b)=>a-b);
+  const last=sorted[sorted.length-1];
+  const cycle=calcCycle()||28;
+  const period=data.period||5;
+  const today=KST();
+  today.setHours(0,0,0,0);
+  const next=addDays(last,cycle);
+  const d=diffDays(next,today);
+  const daysSinceLast=diffDays(today,last);
+
+  let stage;
+  if(daysSinceLast>=0&&daysSinceLast<period)stage="period";
+  else if(d<=0&&d>=-period)stage="period";
+  else if(d>=1&&d<=3)stage="imminent";
+  else if(d>=4&&d<=7)stage="pms";
+  else if(d>=(cycle-18)&&d<=(cycle-12))stage="fertile";
+  else stage="calm";
+
+  return{stage,dday:d,next,last,cycle,period,
+    fertile:{start:addDays(next,-(cycle>0?cycle:28)+Math.round((cycle||28)*0.35)),end:addDays(next,-(cycle>0?cycle:28)+Math.round((cycle||28)*0.5))},
+    pmsStart:addDays(next,-7)};
+}
+
+const THEMES={
+  none:{bg:"#f5f0eb",petals:0,petalColor:"transparent",centerColor:"#c8c0b8",numColor:"#bbb",falling:false,pulse:false,sway:false,leafColor:"#8fb896"},
+  calm:{bg:"#f0efe8",petals:0,petalColor:"transparent",centerColor:"#b8c4a8",numColor:"#a0a890",falling:false,pulse:false,sway:false,leafColor:"#8fb896"},
+  fertile:{bg:"#edf5f0",petals:1,petalColor:"#d4e8d0",centerColor:"#a8d4b0",numColor:"#80b090",falling:false,pulse:true,sway:false,leafColor:"#80c890"},
+  pms:{bg:"#f5eff2",petals:3,petalColor:"#f0c8d4",centerColor:"#d4a0b0",numColor:"#c090a0",falling:false,pulse:false,sway:true,leafColor:"#90b898"},
+  imminent:{bg:"#f8eef0",petals:5,petalColor:"#f0a0b8",centerColor:"#e080a0",numColor:"#d07090",falling:true,pulse:false,sway:true,leafColor:"#88b090"},
+  period:{bg:"#f5e8ea",petals:0,petalColor:"#e8a0b0",centerColor:"#c87888",numColor:"#b86878",falling:true,pulse:true,sway:false,leafColor:"#90a890"}
+};
+
+const STAGE_NAMES={none:"",calm:"\uc528\uc557",fertile:"\uc0c8\uc2f9",pms:"\uaf43\ubd09\uc624\ub9ac",imminent:"\ub9cc\uac1c",period:"\uaf43\ube44"};
+
+function renderMini(){
+  const st=getState();
+  const th=THEMES[st.stage]||THEMES.none;
+
+  document.getElementById("lunaBg").style.background=th.bg;
+  document.getElementById("centerDot").style.background=th.centerColor;
+  document.getElementById("lunaNum").style.color=th.numColor;
+  document.getElementById("leafL").style.background=th.leafColor;
+  document.getElementById("leafR").style.background=th.leafColor;
+
+  if(st.stage==="none"){document.getElementById("lunaNum").textContent="";} 
+  else{document.getElementById("lunaNum").textContent=Math.abs(st.dday);}
+
+  const angles=[-144,-72,0,72,144];
+  for(let i=0;i<5;i++){
+    const p=document.getElementById("p"+i);
+    const show=i<th.petals||(st.stage==="period"&&i<2);
+    p.className="petal"+(show?" show":"");
+    p.style.background=th.petalColor;
+    const rot=angles[i];
+    p.style.transform="rotate("+rot+"deg) translateY(-14px)";
+    if(th.sway&&show){
+      p.style.setProperty("--base-rot",rot+"deg");
+      p.style.animation="sway "+(1.5+i*0.3)+"s ease-in-out infinite";
+    }else{p.style.animation="none"}
+  }
+
+  if(th.pulse){
+    document.getElementById("centerDot").style.animation="pulse 2.5s ease-in-out infinite";
+  }else{
+    document.getElementById("centerDot").style.animation="none";
+  }
+
+  const fps=["fp0","fp1","fp2"];
+  const fallAnims=["fall1 3s ease-in infinite","fall2 3.5s ease-in infinite 0.5s","fall3 4s ease-in infinite 1s"];
+  const fpPos=[{top:"30px",left:"55px"},{top:"25px",left:"35px"},{top:"35px",left:"50px"}];
+  fps.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.style.background=th.petalColor;
+    if(th.falling){
+      el.style.top=fpPos[i].top;el.style.left=fpPos[i].left;
+      el.style.animation=fallAnims[i];
+    }else{el.style.animation="none";el.style.opacity="0"}
+  });
+}
+
+function renderDetail(){
+  const st=getState();
+  document.getElementById("detailStage").textContent=STAGE_NAMES[st.stage]||"";
+  if(st.stage==="none"){
+    document.getElementById("dNext").textContent="-";
+    document.getElementById("dFertile").textContent="-";
+    document.getElementById("dPms").textContent="-";
+    document.getElementById("dLast").textContent="-";
+    document.getElementById("dCycle").textContent="-";
+    return;
+  }
+  document.getElementById("dNext").textContent=fmt(st.next)+" (D-"+Math.abs(st.dday)+")";
+  document.getElementById("dFertile").textContent=fmt(st.fertile.start)+" ~ "+fmt(st.fertile.end);
+  document.getElementById("dPms").textContent=fmt(st.pmsStart)+"~";
+  const sorted=data.records.map(s=>new Date(s)).sort((a,b)=>a-b);
+  document.getElementById("dLast").textContent=fmt(sorted[sorted.length-1]);
+  document.getElementById("dCycle").textContent=(st.cycle||"?")+" days";
+}
+
+let tapCount=0,tapTimer=null;
+document.getElementById("lunaWrap").addEventListener("click",()=>{
+  tapCount++;
+  if(tapCount===1)tapTimer=setTimeout(()=>{tapCount=0},500);
+  if(tapCount>=3){
+    clearTimeout(tapTimer);tapCount=0;
+    renderDetail();
+    const ov=document.getElementById("detailOverlay");
+    ov.style.display="flex";
+    requestAnimationFrame(()=>ov.classList.add("show"));
+  }
+});
+
+document.getElementById("detailOverlay").addEventListener("click",e=>{
+  if(e.target===document.getElementById("detailOverlay")){
+    const ov=document.getElementById("detailOverlay");
+    ov.classList.remove("show");
+    setTimeout(()=>ov.style.display="none",400);
+  }
+});
+
+document.getElementById("btnToday").addEventListener("click",()=>{
+  if(!data)data={records:[],period:5};
+  const today=fmtISO(KST());
+  if(!data.records.includes(today)){
+    data.records.push(today);
+    if(data.records.length>6)data.records=data.records.slice(-6);
+    save();renderMini();renderDetail();
+  }
+});
+
+document.getElementById("btnSettings").addEventListener("click",()=>{
+  document.getElementById("detailOverlay").classList.remove("show");
+  setTimeout(()=>{
+    document.getElementById("detailOverlay").style.display="none";
+    if(data&&data.records){
+      const sorted=data.records.slice().sort().reverse();
+      document.getElementById("sDate1").value=sorted[0]||"";
+      document.getElementById("sDate2").value=sorted[1]||"";
+      document.getElementById("sDate3").value=sorted[2]||"";
+      document.getElementById("sPeriod").value=data.period||5;
+    }
+    const ov=document.getElementById("settingsOverlay");
+    ov.style.display="flex";
+    requestAnimationFrame(()=>ov.classList.add("show"));
+  },400);
+});
+
+document.getElementById("btnCancel").addEventListener("click",()=>{
+  const ov=document.getElementById("settingsOverlay");
+  ov.classList.remove("show");
+  setTimeout(()=>ov.style.display="none",400);
+});
+
+document.getElementById("btnSave").addEventListener("click",()=>{
+  const d1=document.getElementById("sDate1").value;
+  const d2=document.getElementById("sDate2").value;
+  const d3=document.getElementById("sDate3").value;
+  const pd=parseInt(document.getElementById("sPeriod").value)||5;
+  const recs=[d1,d2,d3].filter(v=>v);
+  if(recs.length===0)return;
+  data={records:recs,period:pd};
+  save();renderMini();
+  const ov=document.getElementById("settingsOverlay");
+  ov.classList.remove("show");
+  setTimeout(()=>ov.style.display="none",400);
+});
+
+document.getElementById("btnDelete").addEventListener("click",()=>{
+  if(confirm("모든 데이터를 삭제할까요?")){
+    localStorage.removeItem(LS_KEY);data=null;renderMini();
+    const ov=document.getElementById("settingsOverlay");
+    ov.classList.remove("show");
+    setTimeout(()=>ov.style.display="none",400);
+  }
+});
+
+load();renderMini();
+</script>
+</body>
+</html>
